@@ -5,7 +5,7 @@ namespace VNPAY.NET.Enums
     /// <summary>
     /// Các phương thức thanh toán được VNPAY hỗ trợ.  
     /// </summary>
-    public enum BankCode
+    public enum BankCode : sbyte
     {
         /// <summary>
         /// Tất cả các phương thức thanh toán.  

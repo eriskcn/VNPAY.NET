@@ -10,13 +10,13 @@ namespace VNPAY.NET.Enums
         /// <summary>
         /// Giao diện hiển thị bằng Tiếng Việt.  
         /// </summary>
-        [Description("VN")]
+        [Description("vn")]
         Vietnamese,
 
         /// <summary>
         /// Giao diện hiển thị bằng Tiếng Anh.  
         /// </summary>
-        [Description("EN")]
+        [Description("en")]
         English
     }
 }

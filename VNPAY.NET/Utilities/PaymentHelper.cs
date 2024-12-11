@@ -31,27 +31,25 @@ namespace VNPAY.NET.Utilities
 
         internal string GetPaymentUrl(string baseUrl, string hashSecret)
         {
-            var data = new StringBuilder();
+            var queryBuilder = new StringBuilder();
 
             foreach (var (key, value) in _requestData.Where(kv => !string.IsNullOrEmpty(kv.Value)))
             {
-                data.Append($"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(value)}&");
+                queryBuilder.Append($"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(value)}&");
             }
 
-            var querystring = data.ToString();
-
-            baseUrl += "?" + querystring;
-            var signData = querystring;
-            if (signData.Length > 0)
+            if (queryBuilder.Length > 0)
             {
-                signData = signData.Remove(data.Length - 1, 1);
+                queryBuilder.Length--;
             }
+
+            var signData = queryBuilder.ToString();
 
             var secureHash = Encoder.AsHmacSHA512(hashSecret, signData);
-            baseUrl += "vnp_SecureHash=" + secureHash;
 
-            return baseUrl;
+            return $"{baseUrl}?{signData}&vnp_SecureHash={WebUtility.UrlEncode(secureHash)}";
         }
+
 
         internal bool IsSignatureValid(string inputHash, string secretKey)
         {
@@ -65,19 +63,12 @@ namespace VNPAY.NET.Utilities
             _responseData.Remove("vnp_SecureHashType");
             _responseData.Remove("vnp_SecureHash");
 
-            var data = new StringBuilder();
+            var validData = _responseData
+                .Where(kv => !string.IsNullOrEmpty(kv.Value))
+                .Select(kv => $"{WebUtility.UrlEncode(kv.Key)}={WebUtility.UrlEncode(kv.Value)}");
 
-            foreach (var (key, value) in _responseData.Where(kv => !string.IsNullOrEmpty(kv.Value)))
-            {
-                data.Append($"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(value)}&");
-            }
-
-            if (data.Length > 0)
-            {
-                data.Remove(data.Length - 1, 1);
-            }
-
-            return data.ToString();
+            return string.Join("&", validData);
         }
+
     }
 }

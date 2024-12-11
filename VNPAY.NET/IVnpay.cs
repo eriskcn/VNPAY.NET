@@ -19,10 +19,11 @@ namespace VNPAY.NET
         /// <param name="baseUrl">URL của trang web thanh toán, mặc định sử dụng URL của môi trường Sandbox.</param>
         /// <param name="version">Phiên bản của API mà bạn đang sử dụng.</param>
         /// <param name="orderType">Loại đơn hàng.</param>
-        void Initialize(string tmnCode,
+        void Initialize(
+            string tmnCode,
             string hashSecret,
+            string baseUrl,
             string callbackUrl,
-            string baseUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
             string version = "2.1.0",
             string orderType = "other");
 
@@ -40,7 +41,7 @@ namespace VNPAY.NET
         /// </summary>
         /// <param name="collections">Thông tin các tham số trả về từ VNPAY qua callback.</param>
         /// <returns>Đối tượng phản hồi về trạng thái giao dịch (thành công hay thất bại, phương thức thanh toán, mã giao dịch,...).</returns>
-        PaymentResult GetPaymentResult(IQueryCollection collections);
+        PaymentResult GetPaymentResult(IQueryCollection parameters);
     }
 
 }

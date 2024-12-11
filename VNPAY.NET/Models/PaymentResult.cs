@@ -1,4 +1,6 @@
-﻿namespace VNPAY.NET.Models
+﻿using VNPAY.NET.Enums;
+
+namespace VNPAY.NET.Models
 {
     /// <summary>
     /// Lớp đại diện cho phản hồi từ VNPAY sau khi thực hiện giao dịch thanh toán.
@@ -6,38 +8,33 @@
     public class PaymentResult
     {
         /// <summary>
-        /// Mã tham chiếu giao dịch (PaymentId).  
-        /// Đây là mã duy nhất xác định giao dịch từ phía hệ thống của bạn.  
-        /// Mã này cần được lưu trữ để đối chiếu khi có sự cố hoặc yêu cầu hỗ trợ.
+        /// Mã tham chiếu giao dịch (Transaction Reference). Đây là mã số duy nhất dùng để xác định giao dịch.
         /// </summary>
         public long PaymentId { get; set; }
+
         /// <summary>
-        /// Trạng thái giao dịch thanh toán (thành công hay thất bại).  
+        /// Trạng thái thành công của giao dịch. Nếu là <c>true</c>, giao dịch thành công; nếu là <c>false</c>, giao dịch thất bại.
         /// </summary>
         public bool IsSuccess { get; set; }
 
         /// <summary>
-        /// Mô tả ngắn gọn về giao dịch.  
+        /// Thông tin mô tả nội dung thanh toán viết bằng tiếng Việt, không dấu.
         /// </summary>
         public string Description { get; set; }
 
         /// <summary>
-        /// Mã giao dịch của hệ thống VNPAY.  
-        /// Mã này giúp tra cứu chi tiết giao dịch trong trường hợp cần xác minh hoặc truy vết thông tin giao dịch.
+        /// Mã giao dịch ghi nhận trên hệ thống VNPAY.
         /// </summary>
         public long TransactionId { get; set; }
 
         /// <summary>
-        /// Token xác thực giao dịch, dùng để xác thực tính hợp lệ của giao dịch và đảm bảo tính bảo mật.
+        /// Mã kiểm tra (checksum) để đảm bảo dữ liệu của giao dịch không bị thay đổi trong quá trình chuyển từ VNPAY về <c>CallbackUrl</c>. Cần kiểm tra đúng checksum khi bắt đầu xử lý yêu cầu (trước khi thực hiện các yêu cầu khác).
         /// </summary>
         public string Token { get; set; }
 
         /// <summary>
-        /// Mã phản hồi từ VNPAY (VnpayResponseCode).  
-        /// Mã này giúp xác định kết quả của giao dịch, ví dụ: mã 00 cho giao dịch thành công, mã lỗi cho giao dịch thất bại.  
-        /// Để tra cứu các mã lỗi, tham khảo <see href="https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/">bảng mã lỗi của VNPAY</see>.
+        /// Mã phản hồi kết quả thanh toán, tham khảo chi tiết tại <see href="https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/">bảng mã lỗi của VNPAY</see>.
         /// </summary>
-        public string VnpayResponseCode { get; set; }
+        public TransactionStatusCode TransactionStatusCode { get; set; }
     }
-
 }

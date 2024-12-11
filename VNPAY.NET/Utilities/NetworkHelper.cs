@@ -6,62 +6,39 @@ namespace VNPAY.NET.Utilities
 {
     public class NetworkHelper
     {
-        private const string DefaultIpAddress = "127.0.0.1";
-
         /// <summary>
-        /// Lấy địa chỉ IP của thiết bị thanh toán, sử dụng khi người dùng gọi API tạo URL thanh toán.
+        /// Lấy địa chỉ IP từ HttpContext của API Controller.
         /// </summary>
         /// <param name="context"></param>
-        public static string GetClientIpAddress(HttpContext context)
+        /// <returns></returns>
+        public static string GetIpAddress(HttpContext context)
         {
+            var ipAddress = string.Empty;
             try
             {
                 var remoteIpAddress = context.Connection.RemoteIpAddress;
 
-                if (remoteIpAddress == null)
+                if (remoteIpAddress != null)
                 {
-                    return DefaultIpAddress;
-                }
-
-                if (remoteIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
-                {
-                    var ipv4Address = Dns.GetHostEntry(remoteIpAddress).AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
-
-                    if (ipv4Address != null)
+                    if (remoteIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
                     {
-                        return ipv4Address.ToString();
+                        remoteIpAddress = Dns
+                            .GetHostEntry(remoteIpAddress).AddressList
+                            .FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+                    }
+
+                    if (remoteIpAddress != null)
+                    {
+                        return remoteIpAddress.ToString();
                     }
                 }
-
-                return remoteIpAddress.ToString();
             }
             catch
             {
-                return DefaultIpAddress;
+                return string.Empty;
             }
-        }
 
-        /// <summary>
-        /// Lấy địa chỉ IP của thiết bị đang sử dụng
-        /// </summary>
-        public static string GetLocalIPAddress()
-        {
-            try
-            {
-                var host = Dns.GetHostEntry(Dns.GetHostName());
-                foreach (var ip in host.AddressList)
-                {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        return ip.ToString();
-                    }
-                }
-                return DefaultIpAddress;
-            }
-            catch
-            {
-                return DefaultIpAddress;
-            }
+            return "127.0.0.1";
         }
     }
 }

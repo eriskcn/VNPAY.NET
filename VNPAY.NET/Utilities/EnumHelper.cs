@@ -13,13 +13,8 @@ namespace VNPAY.NET.Utilities
         /// <returns>Mô tả của giá trị enum nếu có, nếu không thì trả về tên giá trị enum.</returns>
         public static string GetDescription(Enum value)
         {
-            // Lấy thông tin trường (field) của giá trị enum.
             FieldInfo field = value.GetType().GetField(value.ToString());
-
-            // Tìm thuộc tính Description đã được gán cho trường enum.
             DescriptionAttribute attribute = (DescriptionAttribute)field.GetCustomAttribute(typeof(DescriptionAttribute));
-
-            // Nếu có mô tả, trả về mô tả, nếu không trả về tên giá trị enum.
             return attribute == null ? value.ToString() : attribute.Description;
         }
     }

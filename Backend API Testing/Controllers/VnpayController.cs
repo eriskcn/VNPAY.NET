@@ -17,22 +17,28 @@ namespace Backend_API_Testing.Controllers
             _vnpay = vnPayservice;
             _configuration = configuration;
 
-            _vnpay.Initialize(_configuration["Vnpay:TmnCode"], _configuration["Vnpay:HashSecret"], _configuration["Vnpay:CallbackUrl"]);
+            _vnpay.Initialize(_configuration["Vnpay:TmnCode"], _configuration["Vnpay:HashSecret"], _configuration["Vnpay:BaseUrl"], _configuration["Vnpay:CallbackUrl"]);
         }
 
+        /// <summary>
+        /// Tạo url thanh toán
+        /// </summary>
+        /// <param name="moneyToPay">Số tiền phải thanh toán</param>
+        /// <param name="description">Mô tả giao dịch</param>
+        /// <returns></returns>
         [HttpGet("CreatePaymentUrl")]
         public ActionResult<string> CreatePaymentUrl(double moneyToPay, string description)
         {
             if (moneyToPay <= 0)
             {
-                return BadRequest("Số tiền phải lớn hơn 0..");
+                return BadRequest("Số tiền phải lớn hơn 0.");
             }
 
-            var ipAddress = NetworkHelper.GetClientIpAddress(HttpContext);
+            var ipAddress = NetworkHelper.GetIpAddress(HttpContext);
 
             var request = new PaymentRequest
             {
-                TxnRef = DateTime.Now.Ticks,
+                PaymentId = DateTime.Now.Ticks,
                 Money = moneyToPay,
                 Description = description,
                 IpAddress = ipAddress
@@ -43,8 +49,12 @@ namespace Backend_API_Testing.Controllers
             return Created(paymentUrl, paymentUrl);
         }
 
+        /// <summary>
+        /// Thực hiện hành động sau khi thanh toán
+        /// </summary>
+        /// <returns>Mô tả kết quả thanh toán</returns>
         [HttpGet("Callback")]
-        public ActionResult<PaymentResult> Callback()
+        public ActionResult<PaymentResult> CallbackAction()
         {
             if (Request.QueryString.HasValue)
             {
@@ -57,7 +67,7 @@ namespace Backend_API_Testing.Controllers
                 return BadRequest(paymentResult);
             }
 
-            return NotFound(null);
+            return NotFound();
         }
     }
 }
