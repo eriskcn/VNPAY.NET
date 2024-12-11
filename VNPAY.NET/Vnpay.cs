@@ -28,7 +28,7 @@ namespace VNPAY.NET
         {
             EnsureParametersBeforePayment();
 
-            var vnpay = new PaymentUtils();
+            var vnpay = new PaymentHelper();
             vnpay.AddRequestData("vnp_Version", _version);
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_TmnCode", _tmnCode);
@@ -46,43 +46,27 @@ namespace VNPAY.NET
             return vnpay.GetPaymentUrl(isTest ? EnumHelper.GetDescription(PaymentUrl.Sandbox) : EnumHelper.GetDescription(PaymentUrl.Production), _callbackUrl);
         }
 
-        public PaymentResponse PaymentExecute(IQueryCollection collections)
+        public PaymentResult GetPaymentResult(IQueryCollection collections)
         {
-            EnsureParametersBeforePayment();
-
-            var utility = new PaymentUtils();
+            var helper = new PaymentHelper();
             foreach (var (key, value) in collections)
             {
                 if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
                 {
-                    utility.AddResponseData(key, value.ToString());
+                    helper.AddResponseData(key, value.ToString());
                 }
             }
 
-            var vnp_TxnRef = Convert.ToInt64(utility.GetResponseValue("vnp_TxnRef"));
-            var vnp_TransactionId = Convert.ToInt64(utility.GetResponseValue("vnp_TransactionNo"));
             var vnp_SecureHash = collections.FirstOrDefault(p => p.Key == "vnp_SecureHash").Value;
-            var vnp_ResponseCode = utility.GetResponseValue("vnp_ResponseCode");
-            var vnp_OrderInfo = utility.GetResponseValue("vnp_OrderInfo");
 
-            bool checkSignature = utility.IsSignatureValid(vnp_SecureHash, _hashSecret);
-            if (!checkSignature)
+            return new PaymentResult
             {
-                return new PaymentResponse
-                {
-                    IsSuccess = false
-                };
-            }
-
-            return new PaymentResponse
-            {
-                IsSuccess = true,
-                PaymentMethod = "VNPAY",
-                OrderDescription = vnp_OrderInfo,
-                TxnRef = vnp_TxnRef.ToString(),
-                TransactionId = vnp_TransactionId.ToString(),
+                PaymentId = Convert.ToInt64(helper.GetResponseValue("vnp_TransactionNo")),
+                IsSuccess = helper.IsSignatureValid(vnp_SecureHash, _hashSecret),
+                TransactionId = Convert.ToInt64(helper.GetResponseValue("vnp_TransactionNo")),
                 Token = vnp_SecureHash,
-                ResponseCode = vnp_ResponseCode
+                VnpayResponseCode = helper.GetResponseValue("vnp_ResponseCode"),
+                Description = helper.GetResponseValue("vnp_OrderInfo"),
             };
         }
 

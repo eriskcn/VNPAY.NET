@@ -3,9 +3,6 @@ using System.Reflection;
 
 namespace VNPAY.NET.Utilities
 {
-    /// <summary>
-    /// Lớp hỗ trợ để lấy mô tả của các giá trị trong enum.  
-    /// </summary>
     public static class EnumHelper
     {
         /// <summary>
@@ -26,5 +23,4 @@ namespace VNPAY.NET.Utilities
             return attribute == null ? value.ToString() : attribute.Description;
         }
     }
-
 }

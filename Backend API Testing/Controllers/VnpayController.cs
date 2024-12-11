@@ -23,6 +23,11 @@ namespace Backend_API_Testing.Controllers
         [HttpGet("CreatePaymentUrl")]
         public ActionResult<string> CreatePaymentUrl(double moneyToPay, string description)
         {
+            if (moneyToPay <= 0)
+            {
+                return BadRequest("Số tiền phải lớn hơn 0..");
+            }
+
             var ipAddress = HttpHelper.GetIpAddress(HttpContext);
 
             var request = new PaymentRequest
@@ -39,19 +44,20 @@ namespace Backend_API_Testing.Controllers
         }
 
         [HttpGet("Callback")]
-        public IActionResult Callback(double moneyToPay, string description)
+        public ActionResult<PaymentResult> Callback()
         {
-            var uniqueNumber = DateTime.Now.Ticks;
-            var request = new PaymentRequest
+            if (Request.QueryString.HasValue)
             {
-                TxnRef = uniqueNumber,
-                Money = moneyToPay,
-                Description = description,
-            };
+                var paymentResult = _vnpay.GetPaymentResult(Request.Query);
+                if (paymentResult.IsSuccess)
+                {
+                    return Ok(paymentResult);
+                }
 
-            var paymentUrl = _vnpay.GetPaymentUrl(request);
+                return BadRequest(paymentResult);
+            }
 
-            return Created(paymentUrl, paymentUrl);
+            return NotFound(null);
         }
     }
 }

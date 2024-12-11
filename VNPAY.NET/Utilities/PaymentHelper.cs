@@ -3,7 +3,7 @@ using System.Text;
 
 namespace VNPAY.NET.Utilities
 {
-    internal class PaymentUtils
+    internal class PaymentHelper
     {
         private readonly SortedList<string, string> _requestData = new(new Comparer());
         private readonly SortedList<string, string> _responseData = new(new Comparer());
@@ -56,23 +56,16 @@ namespace VNPAY.NET.Utilities
         internal bool IsSignatureValid(string inputHash, string secretKey)
         {
             var rspRaw = GetResponseData();
-            var myChecksum = Encoder.AsHmacSHA512(secretKey, rspRaw);
-            return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
+            var checksum = Encoder.AsHmacSHA512(secretKey, rspRaw);
+            return checksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
         }
 
         internal string GetResponseData()
         {
+            _responseData.Remove("vnp_SecureHashType");
+            _responseData.Remove("vnp_SecureHash");
+
             var data = new StringBuilder();
-
-            if (_responseData.ContainsKey("vnp_SecureHashType"))
-            {
-                _responseData.Remove("vnp_SecureHashType");
-            }
-
-            if (_responseData.ContainsKey("vnp_SecureHash"))
-            {
-                _responseData.Remove("vnp_SecureHash");
-            }
 
             foreach (var (key, value) in _responseData.Where(kv => !string.IsNullOrEmpty(kv.Value)))
             {
