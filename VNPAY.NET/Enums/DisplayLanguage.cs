@@ -5,7 +5,7 @@ namespace VNPAY.NET.Enums
     /// <summary>
     /// Ngôn ngữ hiển thị trên giao diện thanh toán VNPAY.  
     /// </summary>
-    public enum Locale
+    public enum DisplayLanguage
     {
         /// <summary>
         /// Giao diện hiển thị bằng Tiếng Việt.  

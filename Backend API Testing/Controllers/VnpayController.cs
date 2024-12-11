@@ -1,7 +1,7 @@
-﻿using Backend_API_Testing.Helpers;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using VNPAY.NET;
 using VNPAY.NET.Models;
+using VNPAY.NET.Utilities;
 
 namespace Backend_API_Testing.Controllers
 {
@@ -28,11 +28,11 @@ namespace Backend_API_Testing.Controllers
                 return BadRequest("Số tiền phải lớn hơn 0..");
             }
 
-            var ipAddress = HttpHelper.GetIpAddress(HttpContext);
+            var ipAddress = NetworkHelper.GetClientIpAddress(HttpContext);
 
             var request = new PaymentRequest
             {
-                TxnRef = DateTime.Now.Microsecond,
+                TxnRef = DateTime.Now.Ticks,
                 Money = moneyToPay,
                 Description = description,
                 IpAddress = ipAddress

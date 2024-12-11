@@ -16,9 +16,15 @@ namespace VNPAY.NET
         /// <param name="tmnCode">Mã cửa hàng của bạn trên VNPAY.</param>
         /// <param name="hashSecret">Mật khẩu bảo mật dùng để mã hóa và xác thực giao dịch.</param>
         /// <param name="callbackUrl">URL mà VNPAY sẽ gọi lại sau khi giao dịch hoàn tất.</param>
-        /// <param name="version">Phiên bản của API mà bạn đang sử dụng (mặc định là "2.1.0").</param>
-        /// <param name="orderType">Loại đơn hàng, mặc định là "other".</param>
-        void Initialize(string tmnCode, string hashSecret, string callbackUrl, string version = "2.1.0", string orderType = "other");
+        /// <param name="baseUrl">URL của trang web thanh toán, mặc định sử dụng URL của môi trường Sandbox.</param>
+        /// <param name="version">Phiên bản của API mà bạn đang sử dụng.</param>
+        /// <param name="orderType">Loại đơn hàng.</param>
+        void Initialize(string tmnCode,
+            string hashSecret,
+            string callbackUrl,
+            string baseUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
+            string version = "2.1.0",
+            string orderType = "other");
 
         /// <summary>
         /// Tạo URL thanh toán cho giao dịch dựa trên các tham số trong yêu cầu thanh toán.
@@ -26,7 +32,7 @@ namespace VNPAY.NET
         /// <param name="request">Thông tin yêu cầu thanh toán, bao gồm các tham số như mã giao dịch, số tiền, mô tả,...</param>
         /// <param name="isTest">Chỉ định xem có phải là môi trường thử nghiệm hay không (mặc định là true).</param>
         /// <returns>URL thanh toán để chuyển hướng người dùng tới trang thanh toán của VNPAY.</returns>
-        string GetPaymentUrl(PaymentRequest request, bool isTest = true);
+        string GetPaymentUrl(PaymentRequest request);
 
         /// <summary>
         /// Thực hiện giao dịch thanh toán và trả về kết quả.

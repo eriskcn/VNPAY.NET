@@ -11,7 +11,7 @@ namespace VNPAY.NET.Models
         /// Mã tham chiếu giao dịch (Transaction Reference). Đây là mã số duy nhất dùng để xác định giao dịch.  
         /// Lưu ý: Giá trị này bắt buộc và cần đảm bảo không bị trùng lặp giữa các giao dịch.
         /// </summary>
-        public required double TxnRef { get; set; }
+        public required long TxnRef { get; set; }
 
         /// <summary>
         /// Mô tả giao dịch dùng để giải thích hoặc ghi chú về mục đích của giao dịch. Ví dụ: "Thanh toán đơn hàng số 12345" hoặc "Nạp tiền tài khoản".
@@ -53,6 +53,6 @@ namespace VNPAY.NET.Models
         /// Ngôn ngữ hiển thị trên giao diện thanh toán của VNPAY, mặc định là tiếng Việt.  
         /// Các giá trị khác có thể bao gồm tiếng Anh (English), tùy thuộc vào yêu cầu người dùng.
         /// </summary>
-        public Locale Locale { get; set; } = Locale.Vietnamese;
+        public DisplayLanguage Language { get; set; } = DisplayLanguage.Vietnamese;
     }
 }

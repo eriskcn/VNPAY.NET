@@ -10,40 +10,47 @@ namespace VNPAY.NET
         private string _tmnCode;
         private string _hashSecret;
         private string _callbackUrl;
+        private string _baseUrl;
         private string _version;
         private string _orderType;
 
-        public void Initialize(string tmnCode, string hashSecret, string callbackUrl, string version = "2.1.0", string orderType = "other")
+        public void Initialize(string tmnCode,
+            string hashSecret,
+            string callbackUrl,
+            string paymentUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
+            string version = "2.1.0",
+            string orderType = "other")
         {
             _tmnCode = tmnCode;
             _hashSecret = hashSecret;
             _callbackUrl = callbackUrl;
+            _baseUrl = paymentUrl;
             _version = version;
             _orderType = orderType;
 
             EnsureParametersBeforePayment();
         }
 
-        public string GetPaymentUrl(PaymentRequest request, bool isTest = true)
+        public string GetPaymentUrl(PaymentRequest request)
         {
             EnsureParametersBeforePayment();
 
-            var vnpay = new PaymentHelper();
-            vnpay.AddRequestData("vnp_Version", _version);
-            vnpay.AddRequestData("vnp_Command", "pay");
-            vnpay.AddRequestData("vnp_TmnCode", _tmnCode);
-            vnpay.AddRequestData("vnp_Amount", (request.Money * 100).ToString());
-            vnpay.AddRequestData("vnp_CreateDate", request.CreatedDate.ToString("yyyyMMddHHmmss"));
-            vnpay.AddRequestData("vnp_CurrCode", request.Currency.ToString().ToUpper());
-            vnpay.AddRequestData("vnp_IpAddr", request.IpAddress);
-            vnpay.AddRequestData("vnp_Locale", EnumHelper.GetDescription(request.Locale).ToLower());
-            vnpay.AddRequestData("vnp_BankCode", request.BankCode == BankCode.ANY ? string.Empty : request.BankCode.ToString());
-            vnpay.AddRequestData("vnp_OrderInfo", request.Description.Trim());
-            vnpay.AddRequestData("vnp_OrderType", _orderType);
-            vnpay.AddRequestData("vnp_ReturnUrl", _callbackUrl);
-            vnpay.AddRequestData("vnp_TxnRef", request.TxnRef.ToString());
+            var helper = new PaymentHelper();
+            helper.AddRequestData("vnp_Version", _version);
+            helper.AddRequestData("vnp_Command", "pay");
+            helper.AddRequestData("vnp_TmnCode", _tmnCode);
+            helper.AddRequestData("vnp_Amount", (request.Money * 100).ToString());
+            helper.AddRequestData("vnp_CreateDate", request.CreatedDate.ToString("yyyyMMddHHmmss"));
+            helper.AddRequestData("vnp_CurrCode", request.Currency.ToString().ToUpper());
+            helper.AddRequestData("vnp_IpAddr", request.IpAddress);
+            helper.AddRequestData("vnp_Locale", EnumHelper.GetDescription(request.Language).ToLower());
+            helper.AddRequestData("vnp_BankCode", request.BankCode == BankCode.ANY ? string.Empty : request.BankCode.ToString());
+            helper.AddRequestData("vnp_OrderInfo", request.Description.Trim());
+            helper.AddRequestData("vnp_OrderType", _orderType);
+            helper.AddRequestData("vnp_ReturnUrl", _callbackUrl);
+            helper.AddRequestData("vnp_TxnRef", request.TxnRef.ToString());
 
-            return vnpay.GetPaymentUrl(isTest ? EnumHelper.GetDescription(PaymentUrl.Sandbox) : EnumHelper.GetDescription(PaymentUrl.Production), _callbackUrl);
+            return helper.GetPaymentUrl(_baseUrl, _hashSecret);
         }
 
         public PaymentResult GetPaymentResult(IQueryCollection collections)
