@@ -2,7 +2,7 @@
 
 namespace VNPAY.NET.Utilities
 {
-    public class Comparer : IComparer<string>
+    internal class Comparer : IComparer<string>
     {
         public int Compare(string x, string y)
         {
