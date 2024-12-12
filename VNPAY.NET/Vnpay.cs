@@ -93,7 +93,7 @@ namespace VNPAY.NET
                 PaymentId = long.Parse(paymentId),
                 TransactionId = long.Parse(transactionId),
                 IsSuccess = statusCode == TransactionStatusCode.Code_00 && helper.IsSignatureValid(vnp_SecureHash, _hashSecret),
-                Token = vnp_SecureHash,
+                Checksum = vnp_SecureHash,
                 TransactionStatusCode = statusCode,
                 Description = EnumHelper.GetDescription(statusCode),
             };

@@ -2,6 +2,9 @@
 {
     using System.ComponentModel;
 
+    /// <summary>
+    /// Mã phản hồi kết quả thanh toán, tham khảo chi tiết tại <see href="https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/">bảng mã lỗi của VNPAY</see>.
+    /// </summary>
     public enum TransactionStatusCode
     {
         [Description("Giao dịch thành công")]

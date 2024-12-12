@@ -28,9 +28,9 @@ namespace VNPAY.NET.Models
         public long TransactionId { get; set; }
 
         /// <summary>
-        /// Mã kiểm tra (checksum) để đảm bảo dữ liệu của giao dịch không bị thay đổi trong quá trình chuyển từ VNPAY về <c>CallbackUrl</c>. Cần kiểm tra đúng checksum khi bắt đầu xử lý yêu cầu (trước khi thực hiện các yêu cầu khác).
+        /// Mã kiểm tra để đảm bảo dữ liệu của giao dịch không bị thay đổi trong quá trình chuyển từ VNPAY về <c>CallbackUrl</c>. Cần kiểm tra đúng checksum khi bắt đầu xử lý yêu cầu (trước khi thực hiện các yêu cầu khác).
         /// </summary>
-        public string Token { get; set; }
+        public string Checksum { get; set; }
 
         /// <summary>
         /// Mã phản hồi kết quả thanh toán, tham khảo chi tiết tại <see href="https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/">bảng mã lỗi của VNPAY</see>.
