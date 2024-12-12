@@ -1,11 +1,13 @@
 # © 2024 Phan Xuan Quang / VNPAY.NET
 ![NuGet Version](https://img.shields.io/nuget/v/VNPAY.NET) ![NuGet Downloads](https://img.shields.io/nuget/dt/VNPAY.NET)
 
+![VNPAY](https://i.imgur.com/gSi6svR.png)
+
 VNPAY là một dịch vụ thanh toán trực tuyến phổ biến tại Việt Nam, hỗ trợ nhiều phương thức thanh toán như thẻ tín dụng, thẻ ATM, QR Code, và ví điện tử. Việc tích hợp VNPAY vào dự án C# .NET sẽ giúp bạn cung cấp cho người dùng một phương thức thanh toán thuận tiện và bảo mật.
 
 Mục tiêu của thư viện này là đơn giản hóa quá trình thiết lập và xử lý giao dịch cho nhà phát triển, đồng thời cải thiện hiệu suất so với code mẫu từ VNPAY.
 
-## :factory: **Cơ chế xử lý**
+## :factory: Cơ chế xử lý
 
 ```mermaid
 flowchart LR
@@ -244,7 +246,7 @@ Kết quả trả về có dạng như sau:
 | Checksum  | Mã kiểm tra để đảm bảo dữ liệu của giao dịch không bị thay đổi trong quá trình chuyển từ VNPAY về `CallbackUrl`.       |
 | TransactionStatusCode  | Mã phản hồi kết quả thanh toán. Tham khảo chi tiết tại [bảng mã lỗi của VNPAY](https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi).       |
 
-## Lưu ý khi triển khai
+## :exclamation: Lưu ý khi triển khai
 - Thay `BaseUrl` thành URL chính thức của VNPAY.
 - Đảm bảo bảo mật cho `HashSecret`.
    
