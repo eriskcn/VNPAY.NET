@@ -252,4 +252,5 @@ Kết quả trả về có dạng như sau:
 ## :exclamation: Lưu ý khi triển khai
 - Thay `BaseUrl` thành URL chính thức của VNPAY.
 - Đảm bảo bảo mật cho `HashSecret`.
+- Thông tin tài khoản để chạy thử trên môi trường Sandbox tại [**ĐÂY**](https://sandbox.vnpayment.vn/apis/vnpay-demo/#th%C3%B4ng-tin-th%E1%BA%BB-test).
    
