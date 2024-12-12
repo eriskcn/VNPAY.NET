@@ -34,19 +34,26 @@ namespace Backend_API_Testing.Controllers
                 return BadRequest("Số tiền phải lớn hơn 0.");
             }
 
-            var ipAddress = NetworkHelper.GetIpAddress(HttpContext);
-
-            var request = new PaymentRequest
+            try
             {
-                PaymentId = DateTime.Now.Ticks,
-                Money = moneyToPay,
-                Description = description,
-                IpAddress = ipAddress
-            };
+                var ipAddress = NetworkHelper.GetIpAddress(HttpContext);
 
-            var paymentUrl = _vnpay.GetPaymentUrl(request);
+                var request = new PaymentRequest
+                {
+                    PaymentId = DateTime.Now.Ticks,
+                    Money = moneyToPay,
+                    Description = description,
+                    IpAddress = ipAddress
+                };
 
-            return Created(paymentUrl, paymentUrl);
+                var paymentUrl = _vnpay.GetPaymentUrl(request);
+
+                return Created(paymentUrl, paymentUrl);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -58,16 +65,23 @@ namespace Backend_API_Testing.Controllers
         {
             if (Request.QueryString.HasValue)
             {
-                var paymentResult = _vnpay.GetPaymentResult(Request.Query);
-                if (paymentResult.IsSuccess)
+                try
                 {
-                    return Ok(paymentResult);
-                }
+                    var paymentResult = _vnpay.GetPaymentResult(Request.Query);
+                    if (paymentResult.IsSuccess)
+                    {
+                        return Ok(paymentResult);
+                    }
 
-                return BadRequest(paymentResult);
+                    return BadRequest(paymentResult);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
 
-            return NotFound();
+            return NotFound("Không tìm thấy thông tin thanh toán.");
         }
     }
 }

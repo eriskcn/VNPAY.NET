@@ -46,8 +46,13 @@ namespace VNPAY.NET.Utilities
                 _responseData.Add(key, value);
             }
         }
-        internal bool IsSignatureCorrect(string inputHash, string secretKey)
+        internal bool IsSignatureCorrect(string? inputHash, string secretKey)
         {
+            if (string.IsNullOrEmpty(inputHash))
+            {
+                return false;
+            }
+
             var rspRaw = GetResponseData();
             var checksum = Encoder.AsHmacSHA512(secretKey, rspRaw);
             return checksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);

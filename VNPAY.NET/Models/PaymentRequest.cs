@@ -24,14 +24,14 @@ namespace VNPAY.NET.Models
         public required double Money { get; set; }
 
         /// <summary>
+        /// Địa chỉ IP của người dùng thực hiện giao dịch.  
+        /// </summary>
+        public required string IpAddress { get; set; }
+
+        /// <summary>
         /// Mã phương thức thanh toán, mã loại ngân hàng hoặc ví điện tử thanh toán. Nếu mang giá trị <c>BankCode.ANY</c> thì chuyển hướng người dùng sang VNPAY chọn phương thức thanh toán.
         /// </summary>
         public BankCode BankCode { get; set; } = BankCode.ANY;
-
-        /// <summary>
-        /// Địa chỉ IP của người dùng thực hiện giao dịch.  
-        /// </summary>
-        public string IpAddress { get; set; } = "127.0.0.1";
 
         /// <summary>
         /// Thời điểm khởi tạo giao dịch. Giá trị mặc định là ngày và giờ hiện tại tại thời điểm yêu cầu được khởi tạo.  

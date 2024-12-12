@@ -40,7 +40,7 @@ namespace VNPAY.NET
         /// Phương thức này được gọi khi nhận được thông tin callback từ VNPAY.
         /// </summary>
         /// <param name="collections">Thông tin các tham số trả về từ VNPAY qua callback.</param>
-        /// <returns>Đối tượng phản hồi về trạng thái giao dịch (thành công hay thất bại, phương thức thanh toán, mã giao dịch,...).</returns>
+        /// <returns></returns>
         PaymentResult GetPaymentResult(IQueryCollection parameters);
     }
 
