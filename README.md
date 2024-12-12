@@ -52,9 +52,12 @@ flowchart LR
     - Nếu giao dịch thất bại (mã trạng thái khác `00`), hệ thống thông báo lỗi và yêu cầu người dùng thử lại.
 
 ## :electric_plug: Cài đặt thư viện `VNPAY.NET`
+> [!NOTE]
+> Phiên bản dành cho .NET 8 có mã phiên bản dạng `8.x.x`, và phiên bản dành cho .NET 6 có mã phiên bản dạng `6.x.x`.
+
 - Cách 1: Tìm và cài đặt thông qua **NuGet Package Manager** nếu bạn sử dụng Visual Studio.
 
-![image](https://github.com/user-attachments/assets/c273a210-4cf4-4c67-bfda-523397efef51)
+![image](https://i.imgur.com/VLaswW3.png)
 
 - Cách 2: Cài đặt thông qua môi trường dòng lệnh. Chi tiết tại [**ĐÂY**](https://www.nuget.org/packages/VNPAY.NET).
 
