@@ -53,11 +53,11 @@ flowchart LR
 
 ## :electric_plug: Cài đặt thư viện `VNPAY.NET`
 > [!NOTE]
-> Phiên bản dành cho .NET 8 có mã phiên bản dạng `8.x.x`, và phiên bản dành cho .NET 6 có mã phiên bản dạng `6.x.x`.
+> Phiên bản dành cho .NET 8 có phiên bản dạng `8.x.x`, và phiên bản dành cho .NET 6 có phiên bản dạng `6.x.x`.
 
 - Cách 1: Tìm và cài đặt thông qua **NuGet Package Manager** nếu bạn sử dụng Visual Studio.
 
-![image](https://i.imgur.com/VLaswW3.png)
+![image](https://i.imgur.com/taiJwIs.png)
 
 - Cách 2: Cài đặt thông qua môi trường dòng lệnh. Chi tiết tại [**ĐÂY**](https://www.nuget.org/packages/VNPAY.NET).
 
