@@ -77,7 +77,7 @@ namespace VNPAY.NET
             var paymentId = responseData.GetValueOrDefault("vnp_TxnRef");
             var transactionId = responseData.GetValueOrDefault("vnp_TransactionNo");
             var statusCode = (TransactionStatusCode)sbyte.Parse(responseData.GetValueOrDefault("vnp_TransactionStatus"));
-            var vnp_SecureHash = responseData.GetValueOrDefault("vnp_SecureHash");
+            var secureHash = responseData.GetValueOrDefault("vnp_SecureHash");
 
             var helper = new PaymentHelper();
             foreach (var (key, value) in responseData)
@@ -92,8 +92,8 @@ namespace VNPAY.NET
             {
                 PaymentId = long.Parse(paymentId),
                 TransactionId = long.Parse(transactionId),
-                IsSuccess = statusCode == TransactionStatusCode.Code_00 && helper.IsSignatureValid(vnp_SecureHash, _hashSecret),
-                Checksum = vnp_SecureHash,
+                IsSuccess = statusCode == TransactionStatusCode.Code_00 && helper.IsSignatureCorrect(secureHash, _hashSecret),
+                Checksum = secureHash,
                 TransactionStatusCode = statusCode,
                 Description = EnumHelper.GetDescription(statusCode),
             };

@@ -8,6 +8,7 @@ namespace VNPAY.NET.Utilities
         private readonly SortedList<string, string> _requestData = new(new Comparer());
         private readonly SortedList<string, string> _responseData = new(new Comparer());
 
+        #region Request for the payment
         internal void AddRequestData(string key, string value)
         {
             if (!string.IsNullOrEmpty(value))
@@ -15,20 +16,6 @@ namespace VNPAY.NET.Utilities
                 _requestData.Add(key, value);
             }
         }
-
-        internal void AddResponseData(string key, string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                _responseData.Add(key, value);
-            }
-        }
-
-        internal string GetResponseValue(string key)
-        {
-            return _responseData.TryGetValue(key, out var value) ? value : string.Empty;
-        }
-
         internal string GetPaymentUrl(string baseUrl, string hashSecret)
         {
             var queryBuilder = new StringBuilder();
@@ -49,15 +36,22 @@ namespace VNPAY.NET.Utilities
 
             return $"{baseUrl}?{signData}&vnp_SecureHash={WebUtility.UrlEncode(secureHash)}";
         }
+        #endregion
 
-
-        internal bool IsSignatureValid(string inputHash, string secretKey)
+        #region Validate the payment response
+        internal void AddResponseData(string key, string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                _responseData.Add(key, value);
+            }
+        }
+        internal bool IsSignatureCorrect(string inputHash, string secretKey)
         {
             var rspRaw = GetResponseData();
             var checksum = Encoder.AsHmacSHA512(secretKey, rspRaw);
             return checksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
         }
-
         internal string GetResponseData()
         {
             _responseData.Remove("vnp_SecureHashType");
@@ -69,6 +63,10 @@ namespace VNPAY.NET.Utilities
 
             return string.Join("&", validData);
         }
-
+        internal string GetResponseValue(string key)
+        {
+            return _responseData.TryGetValue(key, out var value) ? value : string.Empty;
+        }
+        #endregion
     }
 }

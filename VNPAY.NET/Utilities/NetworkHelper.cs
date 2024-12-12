@@ -13,32 +13,23 @@ namespace VNPAY.NET.Utilities
         /// <returns></returns>
         public static string GetIpAddress(HttpContext context)
         {
-            var ipAddress = string.Empty;
             try
             {
                 var remoteIpAddress = context.Connection.RemoteIpAddress;
 
                 if (remoteIpAddress != null)
                 {
-                    if (remoteIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
-                    {
-                        remoteIpAddress = Dns
-                            .GetHostEntry(remoteIpAddress).AddressList
-                            .FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
-                    }
-
-                    if (remoteIpAddress != null)
-                    {
-                        return remoteIpAddress.ToString();
-                    }
+                    return remoteIpAddress.AddressFamily == AddressFamily.InterNetworkV6
+                        ? Dns.GetHostEntry(remoteIpAddress).AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork).ToString()
+                        : remoteIpAddress.ToString();
                 }
+
+                return "127.0.0.1";
             }
             catch
             {
                 return string.Empty;
             }
-
-            return "127.0.0.1";
         }
     }
 }
