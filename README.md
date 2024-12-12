@@ -5,7 +5,7 @@ VNPAY là một dịch vụ thanh toán trực tuyến phổ biến tại Việt
 
 Mục tiêu của thư viện này là đơn giản hóa quá trình thiết lập và xử lý giao dịch cho nhà phát triển, đồng thời cải thiện hiệu suất so với code mẫu từ VNPAY.
 
-## :factory: **Cơ chế xử lý**
+## :factory: Cơ chế xử lý
 
 ```mermaid
 flowchart LR
@@ -244,7 +244,7 @@ Kết quả trả về có dạng như sau:
 | Checksum  | Mã kiểm tra để đảm bảo dữ liệu của giao dịch không bị thay đổi trong quá trình chuyển từ VNPAY về `CallbackUrl`.       |
 | TransactionStatusCode  | Mã phản hồi kết quả thanh toán. Tham khảo chi tiết tại [bảng mã lỗi của VNPAY](https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi).       |
 
-## Lưu ý khi triển khai
+## :exclamation: Lưu ý khi triển khai
 - Thay `BaseUrl` thành URL chính thức của VNPAY.
 - Đảm bảo bảo mật cho `HashSecret`.
    
