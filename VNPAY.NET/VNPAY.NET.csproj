@@ -7,7 +7,7 @@
     <SignAssembly>False</SignAssembly>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>VNPAY.NET</Title>
-    <Authors>Hack Kiếm Sĩ</Authors>
+    <Authors>Phan Xuan Quang</Authors>
     <Company />
     <Description>Thư viện hỗ trợ tích hợp thanh toán VNPAY sử dụng cho .NET</Description>
     <Copyright>© 2024 Phan Xuan Quang / VNPAY.NET</Copyright>
@@ -17,6 +17,8 @@
     <PackageIcon>Icon.png</PackageIcon>
     <AssemblyVersion>1.2.0</AssemblyVersion>
     <FileVersion>1.2.0</FileVersion>
+    <RepositoryUrl>https://github.com/phanxuanquang/VNPAY.NET</RepositoryUrl>
+    <PackageTags>vnpay, vnpay.net, payment,vnPay</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
