@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Globalization;
 using VNPAY.NET.Enums;
 using VNPAY.NET.Models;
 using VNPAY.NET.Utilities;
@@ -74,7 +75,7 @@ namespace VNPAY.NET
         }
 
         /// <summary>
-        /// Lấy kết quả thanh toán sau khi thực hiện giao dịch và chuyển hướng đến <c>CallbackUrl</c>.
+        /// Lấy kết quả thanh toán sau khi thực hiện giao dịch.
         /// </summary>
         /// <param name="parameters">Các tham số trong chuỗi truy vấn của <c>CallbackUrl</c></param>
         /// <returns></returns>
@@ -84,29 +85,26 @@ namespace VNPAY.NET
                 .Where(kv => !string.IsNullOrEmpty(kv.Key) && kv.Key.StartsWith("vnp_"))
                 .ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
 
-            var paymentId = responseData.GetValueOrDefault("vnp_TxnRef");
-            var transactionId = responseData.GetValueOrDefault("vnp_TransactionNo");
-            var transactionStatus = responseData.GetValueOrDefault("vnp_TransactionStatus");
-            var secureHash = responseData.GetValueOrDefault("vnp_SecureHash");
+            var vnp_BankCode = responseData.GetValueOrDefault("vnp_BankCode");
+            var vnp_BankTranNo = responseData.GetValueOrDefault("vnp_BankTranNo");
+            var vnp_CardType = responseData.GetValueOrDefault("vnp_CardType");
+            var vnp_PayDate = responseData.GetValueOrDefault("vnp_PayDate");
+            var vnp_OrderInfo = responseData.GetValueOrDefault("vnp_OrderInfo");
+            var vnp_TransactionNo = responseData.GetValueOrDefault("vnp_TransactionNo");
+            var vnp_ResponseCode = responseData.GetValueOrDefault("vnp_ResponseCode");
+            var vnp_TransactionStatus = responseData.GetValueOrDefault("vnp_TransactionStatus");
+            var vnp_TxnRef = responseData.GetValueOrDefault("vnp_TxnRef");
+            var vnp_SecureHash = responseData.GetValueOrDefault("vnp_SecureHash");
 
-            if (string.IsNullOrEmpty(paymentId))
+            if (string.IsNullOrEmpty(vnp_BankCode)
+                || string.IsNullOrEmpty(vnp_OrderInfo)
+                || string.IsNullOrEmpty(vnp_TransactionNo)
+                || string.IsNullOrEmpty(vnp_ResponseCode)
+                || string.IsNullOrEmpty(vnp_TransactionStatus)
+                || string.IsNullOrEmpty(vnp_TxnRef)
+                || string.IsNullOrEmpty(vnp_SecureHash))
             {
-                throw new ArgumentException("Không tìm thấy PaymentId trong thông tin thanh toán");
-            }
-
-            if (string.IsNullOrEmpty(transactionId))
-            {
-                throw new ArgumentException("Không tìm thấy TransactionId trong thông tin thanh toán");
-            }
-
-            if (string.IsNullOrEmpty(transactionStatus))
-            {
-                throw new ArgumentException("Không tìm thấy TransactionStatus trong thông tin thanh toán");
-            }
-
-            if (string.IsNullOrEmpty(secureHash))
-            {
-                throw new ArgumentException(EnumHelper.GetDescription(TransactionStatusCode.Code_97));
+                throw new ArgumentException("Không đủ dữ liệu để xác thực giao dịch");
             }
 
             var helper = new PaymentHelper();
@@ -118,14 +116,34 @@ namespace VNPAY.NET
                 }
             }
 
-            var statusCode = (TransactionStatusCode)sbyte.Parse(transactionStatus);
+            var responseCode = (ResponseCode)sbyte.Parse(vnp_ResponseCode);
+            var transactionStatusCode = (TransactionStatusCode)sbyte.Parse(vnp_TransactionStatus);
+
             return new PaymentResult
             {
-                PaymentId = long.Parse(paymentId),
-                TransactionId = long.Parse(transactionId),
-                IsSuccess = statusCode == TransactionStatusCode.Code_00 && helper.IsSignatureCorrect(secureHash, _hashSecret),
-                TransactionStatusCode = statusCode,
-                Description = EnumHelper.GetDescription(statusCode),
+                PaymentId = long.Parse(vnp_TxnRef),
+                VnpayTransactionId = long.Parse(vnp_TransactionNo),
+                IsSuccess = transactionStatusCode == TransactionStatusCode.Code_00 && responseCode == ResponseCode.Code_00 && helper.IsSignatureCorrect(vnp_SecureHash, _hashSecret),
+                Description = vnp_OrderInfo,
+                PaymentMethod = string.IsNullOrEmpty(vnp_CardType) ? "Không xác định" : vnp_CardType,
+                Timestamp = string.IsNullOrEmpty(vnp_PayDate)
+                    ? DateTime.Now
+                    : DateTime.ParseExact(vnp_PayDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
+                TransactionStatus = new TransactionStatus
+                {
+                    Code = transactionStatusCode,
+                    Description = EnumHelper.GetDescription(transactionStatusCode)
+                },
+                PaymentResponse = new PaymentResponse
+                {
+                    Code = responseCode,
+                    Description = EnumHelper.GetDescription(responseCode)
+                },
+                BankingInfor = new BankingInfor
+                {
+                    BankCode = vnp_BankCode,
+                    BankTransactionId = string.IsNullOrEmpty(vnp_BankTranNo) ? "Không xác định" : vnp_BankTranNo,
+                }
             };
         }
 

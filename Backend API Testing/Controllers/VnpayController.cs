@@ -91,19 +91,21 @@ namespace Backend_API_Testing.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("Callback")]
-        public ActionResult<PaymentResult> Callback()
+        public ActionResult<string> Callback()
         {
             if (Request.QueryString.HasValue)
             {
                 try
                 {
                     var paymentResult = _vnpay.GetPaymentResult(Request.Query);
+                    var resultDescription = $"{paymentResult.PaymentResponse.Description}. {paymentResult.TransactionStatus.Description}.";
+
                     if (paymentResult.IsSuccess)
                     {
-                        return Ok(paymentResult);
+                        return Ok(resultDescription);
                     }
 
-                    return BadRequest(paymentResult);
+                    return BadRequest(resultDescription);
                 }
                 catch (Exception ex)
                 {
