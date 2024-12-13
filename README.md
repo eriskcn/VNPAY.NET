@@ -239,21 +239,23 @@ public IActionResult IpnAction()
 
 ```csharp
 [HttpGet("Callback")]
-public ActionResult<PaymentResult> Callback()
+public ActionResult<string> Callback()
 {
     if (Request.QueryString.HasValue)
     {
         try
         {
             var paymentResult = _vnpay.GetPaymentResult(Request.Query);
+            var resultDescription = $"{paymentResult.PaymentResponse.Description}. {paymentResult.TransactionStatus.Description}.";
+
             if (paymentResult.IsSuccess)
             {
-                return Ok(paymentResult);
+                return Ok(resultDescription);
             }
 
-            return BadRequest(paymentResult);
+            return BadRequest(resultDescription);
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
@@ -266,23 +268,42 @@ public ActionResult<PaymentResult> Callback()
 Kết quả trả về có dạng như sau:
 ```json
 {
-    "paymentId": 1234567890,
+    "paymentId": 638697289176052600,
     "isSuccess": true,
-    "description": "Giao dịch thành công",
-    "transactionId": 14739302,
-    "transactionStatusCode": 0
+    "description": "1",
+    "timestamp": "2024-12-13T23:21:59",
+    "vnpayTransactionId": 14742893,
+    "paymentMethod": "ATM",
+    "paymentResponse": {
+        "code": 0,
+        "description": "Giao dịch thành công"
+    },
+    "transactionStatus": {
+        "code": 0,
+        "description": "Giao dịch thành công"
+    },
+    "bankingInfor": {
+        "bankCode": "NCB",
+        "bankTransactionId": "VNP14742893"
+    }
 }
 ```
 - Trong đó:
 
-| **Thuộc tính**    | **Mô tả**                                                                                                                                                                    |
-|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| PaymentId      | Mã tham chiếu giao dịch (Transaction Reference). Đây là mã số duy nhất dùng để xác định giao dịch. |
-| IsSuccess   | Trạng thái thành công của giao dịch. Nếu là `true`, giao dịch thành công; nếu là `false`, giao dịch thất bại.                                                                               |
-| Description      | Mô tả kết quả thanh toán viết bằng tiếng Việt, không dấu. Tham khảo chi tiết tại [bảng mã lỗi của VNPAY](https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi).                                                                      |
-| TransactionId  | Mã giao dịch ghi nhận trên hệ thống VNPAY.      |
-| Checksum  | Mã kiểm tra để đảm bảo dữ liệu của giao dịch không bị thay đổi trong quá trình chuyển từ VNPAY về `CallbackUrl`.       |
-| TransactionStatusCode  | Mã phản hồi kết quả thanh toán. Tham khảo chi tiết tại [bảng mã lỗi của VNPAY](https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi).       |
+| Thuộc tính               | Kiểu dữ liệu | Mô tả                                                  |
+|--------------------------|--------------|--------------------------------------------------------|
+| `PaymentId`              | long         | Mã thanh toán duy nhất cho giao dịch.                  |
+| `IsSuccess`              | bool         | Trạng thái giao dịch thành công. Giá trị là `true` nếu chữ ký chính xác, *PaymentResponse.ResponseCode* và *TransactionStatus.Code* đều bằng 0. |
+| `Description`            | string       | Mô tả về giao dịch.                        |
+| `Timestamp`              | DateTime     | Thời gian giao dịch được thực hiện.                   |
+| `VnpayTransactionId`     | long         | Mã giao dịch của hệ thống VNPAY.                       |
+| `PaymentMethod`          | string       | Phương thức thanh toán (ví dụ: ATM, thẻ tín dụng).    |
+| `PaymentResponse.Code`   | int          | Mã phản hồi từ hệ thống VNPAY (0 là thành công).       |
+| `PaymentResponse.Description` | string   | Mô tả chi tiết mã phản hồi từ VNPAY.                   |
+| `TransactionStatus.Code` | int          | Mã trạng thái giao dịch (0 là thành công).             |
+| `TransactionStatus.Description` | string | Mô tả chi tiết về trạng thái giao dịch.                |
+| `BankingInfor.BankCode`  | string       | Mã ngân hàng (ví dụ: NCB, Vietcombank).                |
+| `BankingInfor.BankTransactionId` | string | Mã giao dịch của ngân hàng.                            |
 
 ## :exclamation: Lưu ý khi triển khai
 - Thay `BaseUrl` thành URL chính thức của VNPAY.
