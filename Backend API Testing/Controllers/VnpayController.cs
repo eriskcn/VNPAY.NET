@@ -57,7 +57,7 @@ namespace Backend_API_Testing.Controllers
         }
 
         /// <summary>
-        /// Thực hiện hành động sau khi thanh toán.
+        /// Thực hiện hành động sau khi thanh toán. URL này cần được khai báo với VNPAY trước (ví dụ: http://localhost:1234/api/Vnpay/IpnAction)
         /// </summary>
         /// <returns></returns>
         [HttpGet("IpnAction")]
