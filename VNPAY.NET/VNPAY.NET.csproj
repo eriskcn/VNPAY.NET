@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <SignAssembly>False</SignAssembly>
@@ -12,11 +12,11 @@
     <Description>Thư viện hỗ trợ tích hợp thanh toán VNPAY sử dụng cho .NET</Description>
     <Copyright>© 2024 Phan Xuan Quang / VNPAY.NET</Copyright>
     <PackageProjectUrl>https://github.com/phanxuanquang/VNPAY.NET</PackageProjectUrl>
-    <Version>8.2.0</Version>
+    <Version>8.4.0</Version>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <PackageIcon>Icon.png</PackageIcon>
-    <AssemblyVersion>8.2.0</AssemblyVersion>
-    <FileVersion>8.2.0</FileVersion>
+    <AssemblyVersion>8.4.0</AssemblyVersion>
+    <FileVersion>8.4.0</FileVersion>
     <RepositoryUrl>https://github.com/phanxuanquang/VNPAY.NET</RepositoryUrl>
     <PackageTags>vnpay, vnpay.net, payment,vnPay</PackageTags>
   </PropertyGroup>
