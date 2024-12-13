@@ -11,45 +11,42 @@ Mục tiêu của thư viện này là đơn giản hóa quá trình thiết l�
 
 ```mermaid
 flowchart LR
-    A[Người dùng chọn thanh toán] --> B[Hệ thống tạo URL thanh toán VNPAY]
-    B --> C[Chuyển người dùng tới trang thanh toán VNPAY]
-
-    C --> D{Người dùng chọn phương thức thanh toán?}
-    D -->|Có| E[VNPAY xử lý giao dịch]
-    D -->|Không| F[Hủy giao dịch]
-
-    E --> G{VNPAY xử lý giao dịch thành công?}
-    G -->|Có| H[VNPAY lưu kết quả giao dịch và gửi trả kết quả về CallbackUrl của bạn]
-    G -->|Không| I[Thông báo lỗi và yêu cầu thử lại]
-
-    H --> J[Hệ thống nhận kết quả từ VNPAY]
-    J --> K[Kiểm tra thông tin trả về từ VNPAY]
-    K --> L{Giao dịch thành công?}
-    L -->|Có| M[Xử lý giao dịch: Cập nhật trạng thái giao dịch vào cơ sở dữ liệu]
-    L -->|Không| N[Thông báo lỗi bảo mật]
-
-    M --> O{Trạng thái giao dịch}
-    O -->|Thành công| P[Hoàn tất giao dịch: Thông báo thành công cho người dùng]
-    O -->|Thất bại| Q[Thông báo thất bại cho người dùng và yêu cầu thử lại]
+    A[Người dùng đặt hàng] --> B[Chọn thanh toán qua VNPAY]
+    B --> C[Hệ thống tạo URL thanh toán]
+    C --> D[Người dùng được chuyển tới cổng VNPAY]
+    D -->|Thanh toán thành công| E[IPN: VNPAY gửi thông báo đến backend]
+    D -->|Người dùng quay lại website| F[Redirect URL: VNPAY chuyển người dùng về frontend]
+    
+    E --> G[Xác thực chữ ký tại backend]
+    G -->|Hợp lệ và thành công| H[Cập nhật đơn hàng thành Paid]
+    G -->|Chữ ký không hợp lệ| I[Trả mã lỗi 97]
+    
+    F --> J[Kiểm tra trạng thái giao dịch]
+    J -->|Giao dịch thành công| K[Hiển thị kết quả thành công cho người dùng]
+    J -->|Giao dịch thất bại| L[Hiển thị lỗi/thất bại]
+    
+    H --> M[Hoàn tất quy trình]
+    K --> M
+    L --> M
 ```
 
-1. Người dùng chọn thanh toán cho sản phẩm/dịch vụ trên website của bạn.
-   
-2. Hệ thống của bạn tạo URL chứa các tham số giao dịch.
-   
-3. Người dùng được chuyển đến trang thanh toán của VNPAY.
-   
-4. Người dùng chọn phương thức thanh toán (QR, thẻ tín dụng, thẻ ATM,...).
-   
-5. VNPAY nhận yêu cầu và xử lý giao dịch. Nếu thành công, chuyển đến bước tiếp theo; nếu không, người dùng sẽ nhận thông báo lỗi và giao dịch bị hủy.
-    
-6. Nếu giao dịch thành công, VNPAY trả kết quả về `CallbackUrl` của bạn.
-    
-7. Hệ thống của bạn nhận kết quả trả về từ VNPAY qua URL `CallbackUrl` và tiến hành kiểm tra.
-    
-8. Hệ thống của bạn kiểm tra trạng thái giao dịch. Nếu thành công, hệ thống cập nhật trạng thái và thông báo thành công cho người dùng.
-    - Nếu giao dịch thành công (mã trạng thái `00`), hệ thống cập nhật trạng thái và thông báo thành công cho người dùng.
-    - Nếu giao dịch thất bại (mã trạng thái khác `00`), hệ thống thông báo lỗi và yêu cầu người dùng thử lại.
+1. **Khởi tạo giao dịch**:
+   - Người dùng tiến hành thanh toán trực tuyến và chọn phương thức thanh toán qua VNPAY.
+   - Hệ thống backend tạo URL thanh toán với các tham số cần thiết.
+
+2. **Người dùng thanh toán qua cổng VNPAY**:
+   - Người dùng được chuyển hướng đến cổng thanh toán của VNPAY để thực hiện giao dịch.
+   - Sau khi hoàn tất, VNPAY gọi hai nơi:
+     - **IPN URL (backend)** để thông báo trạng thái giao dịch.
+     - **Callback URL (frontend)** để điều hướng người dùng quay lại trang web.
+
+3. **Xử lý trên IPN URL**:
+   - Hệ thống backend nhận thông báo từ VNPAY thông qua IPN URL.
+   - Nếu giao dịch hợp lệ và thành công (`vnp_ResponseCode = 00`), trạng thái đơn hàng được cập nhật thành **Paid**.
+
+4. **Xử lý trên Callback URL**:
+   - Khi người dùng quay lại trang web qua Callback URL, hệ thống kiểm tra trạng thái giao dịch dựa trên thông tin VNPAY gửi kèm.
+   - Hiển thị kết quả giao dịch (thành công/thất bại/lỗi) cho người dùng.
 
 ## :electric_plug: Cài đặt thư viện `VNPAY.NET`
 > [!NOTE]
@@ -63,7 +60,7 @@ flowchart LR
 
 ## :black_nib: Đăng ký tài khoản và lấy thông tin từ VNPAY
 > [!NOTE]
-> Đăng ký để lấy thông tin tích hợp tại [**ĐÂY**](https://sandbox.vnpayment.vn/devreg/). Hệ thống sẽ gửi thông tin kết nối về email được đăng ký.
+> Đăng ký để lấy thông tin tích hợp tại [**ĐÂY**](https://sandbox.vnpayment.vn/devreg/). Hệ thống sẽ gửi thông tin kết nối về email được đăng ký (có thể chậm vài giờ hoặc vài ngày).
 
 | Thông tin    | Mô tả                                                                                                                                                                           |
 |--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -75,6 +72,9 @@ flowchart LR
 ## :dart: Hướng dẫn sử dụng
 
 ### 1. Thêm thông tin cấu hình VNPAY vào dự án
+> [!WARNING]
+> Cần đảm bảo thông tin `vnp_TmnCode` và `vnp_HashSecret` bảo mật tuyệt đối.
+
 #### a. Đối với ASP.NET Core (từ .NET 6 về sau) sử dụng `appsettings.json`
 Thêm những thông tin cấu hình lấy từ VNPAY vào `appsettings.json` như ví dụ sau:
 ```cs
@@ -151,79 +151,115 @@ public class VnpayPayment
 [HttpGet("CreatePaymentUrl")]
 public ActionResult<string> CreatePaymentUrl(double moneyToPay, string description)
 {
-    if (moneyToPay <= 0)
+    try
     {
-        return BadRequest("Số tiền phải lớn hơn 0.");
+        var ipAddress = NetworkHelper.GetIpAddress(HttpContext); // Lấy địa chỉ IP của thiết bị thực hiện giao dịch
+
+        var request = new PaymentRequest
+        {
+            PaymentId = DateTime.Now.Ticks,
+            Money = moneyToPay,
+            Description = description,
+            IpAddress = ipAddress,
+            BankCode = BankCode.ANY, // Tùy chọn. Mặc định là tất cả phương thức giao dịch
+            CreatedDate = DateTime.Now, // Tùy chọn. Mặc định là thời điểm hiện tại
+            Currency = Currency.VND, // Tùy chọn. Mặc định là VND (Việt Nam đồng)
+            Language = DisplayLanguage.Vietnamese // Tùy chọn. Mặc định là tiếng Việt
+        };
+
+        var paymentUrl = _vnpay.GetPaymentUrl(request);
+
+        return Created(paymentUrl, paymentUrl);
     }
-
-    var ipAddress = NetworkHelper.GetIpAddress(HttpContext); // Lấy địa chỉ IP của thiết bị thực hiện giao dịch
-
-    var request = new PaymentRequest
+    catch (Exception ex)
     {
-        PaymentId = DateTime.Now.Ticks, 
-        Money = moneyToPay,
-        Description = description,
-        IpAddress = ipAddress
-    };
-
-    var paymentUrl = _vnpay.GetPaymentUrl(request); 
-
-    return Created(paymentUrl, paymentUrl);
+        return BadRequest(ex.Message);
+    }
 }
 ```
 
-Bạn có thể tạo `paymentRequest` với nhiều thông tin hơn như ví dụ sau:
-```cs
-var paymentRequest = new PaymentRequest
-{
-    PaymentId = 123456789, 
-    Description = "Thanh toan hoa don dich vu", 
-    Money = 5000000, // Số tiền thanh toán
-    BankCode = BankCode.ANY, // Phương thức thanh toán (ở đây là bất kỳ phương thức nào)
-    IpAddress = "192.168.1.1", // Địa chỉ IP của người dùng
-    CreatedDate = DateTime.Now, // Ngày giờ khởi tạo giao dịch
-    Currency = Currency.VND, // Đơn vị tiền tệ là VND
-    Language = DisplayLanguage.Vietnamese // Ngôn ngữ hiển thị là tiếng Việt
-};
-```
 - Trong đó:
 
-| **Thuộc tính**    | **Mô tả**                                                                                                                                                                           |
+| **Thuộc tính**    | **Mô tả**                                                                                                                                                                    |
 |----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **PaymentId**        | Mã tham chiếu giao dịch (Transaction Reference). Đây là mã số duy nhất dùng để xác định giao dịch. Bắt buộc và không được trùng lặp giữa các giao dịch. |
 | **Description**      | Thông tin mô tả nội dung thanh toán, không dấu và không chứa ký tự đặc biệt.                                                                            |
 | **Money**            | Số tiền thanh toán. Không chứa ký tự phân cách thập phân, phần nghìn, hoặc ký hiệu tiền tệ.                                                            |
 | **BankCode**         | Mã phương thức thanh toán, ngân hàng hoặc ví điện tử. Nếu giá trị là `BankCode.ANY`, người dùng sẽ chọn phương thức thanh toán trên giao diện VNPAY.    |
-| **IpAddress**        | Địa chỉ IP của người thực hiện giao dịch. Mặc định là `"127.0.0.1"`.                                                                                   |
+| **IpAddress**        | Địa chỉ IP của người thực hiện giao dịch.                                                                                    |
 | **CreatedDate**      | Thời điểm khởi tạo giao dịch. Mặc định là ngày giờ hiện tại tại thời điểm tạo yêu cầu.                                                                  |
 | **Currency**         | Đơn vị tiền tệ sử dụng thanh toán. Hiện tại chỉ hỗ trợ loại tiền tệ là `VND`.                                                                           |
 | **Language**         | Ngôn ngữ hiển thị trên giao diện thanh toán của VNPAY. Mặc định là `Vietnamese`.                                                                       |
 
-> [!WARNING]
->`PaymentId`, `Description`, và `Money` là các trường bắt buộc cần phải có giá trị khi khởi tạo. 
-
 ### 2. Xử lý sau thanh toán
-> [!NOTE]
-> Đây chính là URL được tự động chuyển hướng đến sau khi kết thúc thanh toán. Ví dụ: `https://localhost:1234/api/Vnpay/Callback`.
-> Phía frontend sẽ bắt kết quả phản hồi để xử lý tiếp.
+
+Sử dụng IPN (Instant Payment Notification) URL cho phép hệ thống backend tự động nhận thông báo từ VNPAY khi trạng thái thanh toán thay đổi để từ đó xử lý tiếp mà không cần người dùng phải quay lại trang web. 
+
+> [!WARNING]
+> - Khi đăng ký tích hợp VNPAY, bạn cần cung cấp IPN URL (Ví dụ: `https://localhost:1234/api/Vnpay/IpnAction`) để VNPAY gọi khi có giao dịch.
+> - Đường dẫn IPN phải sử dụng giao thức `HTTPS` để đảm bảo an toàn.
+> - Lưu ý chi tiết đọc tại [**ĐÂY**](https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.html#l%C6%B0u-%C3%BD-1).
+
 ```csharp
-[HttpGet("Callback")]
-public ActionResult<PaymentResult> CallbackAction()
+[HttpGet("IpnAction")]
+public IActionResult IpnAction()
 {
     if (Request.QueryString.HasValue)
     {
-        var paymentResult = _vnpay.GetPaymentResult(Request.Query);
-        if (paymentResult.IsSuccess)
+        try
         {
-            // Thực hiện hành động nếu thanh toán thành công tại đây. Ví dụ: Cập nhật trạng thái đơn hàng trong cơ sở dữ liệu.
-            return Ok(paymentResult);
-        }
+            var paymentResult = _vnpay.GetPaymentResult(Request.Query);
+            if (paymentResult.IsSuccess)
+            {
+                // Thực hiện hành động nếu thanh toán thành công tại đây. Ví dụ: Cập nhật trạng thái đơn hàng trong cơ sở dữ liệu.
+                return Ok();
+            }
 
-        // Thực hiện hành động nếu thanh toán thất bại tại đây. Ví dụ: Thông báo thanh toán thất bại cho người dùng.
-        return BadRequest(paymentResult);
+            // Thực hiện hành động nếu thanh toán thất bại tại đây. Ví dụ: Hủy đơn hàng.
+            return BadRequest("Thanh toán thất bại");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
-    return NotFound();
+    return NotFound("Không tìm thấy thông tin thanh toán.");
+}
+```
+
+### 3. Trả kết quả thanh toán cho người dùng
+> [!NOTE]
+> Đây chính là URL được tự động chuyển hướng đến sau khi kết thúc thanh toán. Ví dụ: `https://localhost:1234/api/Vnpay/Callback`.
+> Phía frontend sẽ bắt kết quả phản hồi để xử lý tiếp.
+
+> [!WARNING]
+> - URL này chỉ kiểm tra kết quả thanh toán và trả về cho người dùng.
+> - Không nên được sử dụng để xử lý tiếp đơn hàng.
+
+```csharp
+[HttpGet("Callback")]
+public ActionResult<PaymentResult> Callback()
+{
+    if (Request.QueryString.HasValue)
+    {
+        try
+        {
+            var paymentResult = _vnpay.GetPaymentResult(Request.Query);
+            if (paymentResult.IsSuccess)
+            {
+                return Ok(paymentResult);
+            }
+
+            return BadRequest(paymentResult);
+        }
+        catch (Exception ex) 
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    return NotFound("Không tìm thấy thông tin thanh toán.");
 }
 ```
 
@@ -234,13 +270,12 @@ Kết quả trả về có dạng như sau:
     "isSuccess": true,
     "description": "Giao dịch thành công",
     "transactionId": 14739302,
-    "checksum": "ae11ae623c33612fc3a...",
     "transactionStatusCode": 0
 }
 ```
 - Trong đó:
 
-| **Thuộc tính**    | **Mô tả**                                                                                                                                                                           |
+| **Thuộc tính**    | **Mô tả**                                                                                                                                                                    |
 |--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | PaymentId      | Mã tham chiếu giao dịch (Transaction Reference). Đây là mã số duy nhất dùng để xác định giao dịch. |
 | IsSuccess   | Trạng thái thành công của giao dịch. Nếu là `true`, giao dịch thành công; nếu là `false`, giao dịch thất bại.                                                                               |
