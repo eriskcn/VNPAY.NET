@@ -24,11 +24,11 @@ namespace Backend_API_Testing.Controllers
         /// <summary>
         /// Tạo url thanh toán
         /// </summary>
-        /// <param name="moneyToPay">Số tiền phải thanh toán</param>
+        /// <param name="money">Số tiền phải thanh toán</param>
         /// <param name="description">Mô tả giao dịch</param>
         /// <returns></returns>
         [HttpGet("CreatePaymentUrl")]
-        public ActionResult<string> CreatePaymentUrl(double moneyToPay, string description)
+        public ActionResult<string> CreatePaymentUrl(double money, string description)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace Backend_API_Testing.Controllers
                 var request = new PaymentRequest
                 {
                     PaymentId = DateTime.Now.Ticks,
-                    Money = moneyToPay,
+                    Money = money,
                     Description = description,
                     IpAddress = ipAddress,
                     BankCode = BankCode.ANY, // Tùy chọn. Mặc định là tất cả phương thức giao dịch
@@ -58,7 +58,6 @@ namespace Backend_API_Testing.Controllers
 
         /// <summary>
         /// Thực hiện hành động sau khi thanh toán.
-        /// 
         /// </summary>
         /// <returns></returns>
         [HttpGet("IpnAction")]
@@ -106,7 +105,7 @@ namespace Backend_API_Testing.Controllers
 
                     return BadRequest(paymentResult);
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     return BadRequest(ex.Message);
                 }

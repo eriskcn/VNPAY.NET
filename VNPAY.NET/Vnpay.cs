@@ -96,7 +96,7 @@ namespace VNPAY.NET
 
             if (string.IsNullOrEmpty(transactionId))
             {
-                throw new ArgumentException("Không tìm thấy TransactionId trong thông tin thanh toán"); 
+                throw new ArgumentException("Không tìm thấy TransactionId trong thông tin thanh toán");
             }
 
             if (string.IsNullOrEmpty(transactionStatus))
@@ -118,7 +118,7 @@ namespace VNPAY.NET
                 }
             }
 
-            var statusCode = (TransactionStatusCode)sbyte.Parse(transactionStatus);  
+            var statusCode = (TransactionStatusCode)sbyte.Parse(transactionStatus);
             return new PaymentResult
             {
                 PaymentId = long.Parse(paymentId),
