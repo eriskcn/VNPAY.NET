@@ -19,12 +19,12 @@ namespace VNPAY.NET.Models
         public required string Description { get; set; }
 
         /// <summary>
-        /// Số tiền thanh toán. Số tiền không mang các ký tự phân tách thập phân, phần nghìn, ký tự tiền tệ.
+        /// Số tiền thanh toán. Số tiền không mang các ký tự phân tách thập phân, phần nghìn, ký tự tiền tệ. Số tiền phải nằm trong khoảng 5.000 (VND) đến 1.000.000.000 (VND).
         /// </summary>
         public required double Money { get; set; }
 
         /// <summary>
-        /// Địa chỉ IP của người dùng thực hiện giao dịch.  
+        /// Địa chỉ IP của thiết bị thực hiện giao dịch.  
         /// </summary>
         public required string IpAddress { get; set; }
 

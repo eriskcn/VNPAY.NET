@@ -40,19 +40,19 @@ namespace VNPAY.NET
         {
             EnsureParametersBeforePayment();
 
-            if (request.Money <= 0)
+            if (request.Money < 5000 || request.Money > 1000000000)
             {
-                throw new ArgumentException("Số tiền thanh toán phải là số dương");
+                throw new ArgumentException("Số tiền thanh toán phải nằm trong khoảng 5.000 (VND) đến 1.000.000.000 (VND).");
             }
 
             if (string.IsNullOrEmpty(request.Description))
             {
-                throw new ArgumentException("Không được để trống mô tả giao dịch");
+                throw new ArgumentException("Không được để trống mô tả giao dịch.");
             }
 
             if (string.IsNullOrEmpty(request.IpAddress))
             {
-                throw new ArgumentException("Không được để trống địa chỉ IP");
+                throw new ArgumentException("Không được để trống địa chỉ IP.");
             }
 
             var helper = new PaymentHelper();
@@ -80,35 +80,36 @@ namespace VNPAY.NET
         /// <returns></returns>
         public PaymentResult GetPaymentResult(IQueryCollection parameters)
         {
-            var helper = new PaymentHelper();
             var responseData = parameters
                 .Where(kv => !string.IsNullOrEmpty(kv.Key) && kv.Key.StartsWith("vnp_"))
                 .ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
 
-            var secureHash = responseData.GetValueOrDefault("vnp_SecureHash");
-            if (!helper.IsSignatureCorrect(secureHash, _hashSecret))
-            {
-                throw new UnauthorizedAccessException(EnumHelper.GetDescription(TransactionStatusCode.Code_97));
-            }
-
             var paymentId = responseData.GetValueOrDefault("vnp_TxnRef");
+            var transactionId = responseData.GetValueOrDefault("vnp_TransactionNo");
+            var transactionStatus = responseData.GetValueOrDefault("vnp_TransactionStatus");
+            var secureHash = responseData.GetValueOrDefault("vnp_SecureHash");
+
             if (string.IsNullOrEmpty(paymentId))
             {
-                throw new ArgumentNullException("Không tìm thấy PaymentId");
+                throw new ArgumentException("Không tìm thấy PaymentId trong thông tin thanh toán");
             }
 
-            var transactionId = responseData.GetValueOrDefault("vnp_TransactionNo");
             if (string.IsNullOrEmpty(transactionId))
             {
-                throw new ArgumentNullException("Không tìm thấy TransactionId");
+                throw new ArgumentException("Không tìm thấy TransactionId trong thông tin thanh toán"); 
             }
 
-            var transactionStatusCode = responseData.GetValueOrDefault("vnp_TransactionStatus");
-            if (string.IsNullOrEmpty(transactionStatusCode))
+            if (string.IsNullOrEmpty(transactionStatus))
             {
-                throw new ArgumentNullException("Không tìm thấy TransactionStatusCode");
+                throw new ArgumentException("Không tìm thấy TransactionStatus trong thông tin thanh toán");
             }
 
+            if (string.IsNullOrEmpty(secureHash))
+            {
+                throw new ArgumentException(EnumHelper.GetDescription(TransactionStatusCode.Code_97));
+            }
+
+            var helper = new PaymentHelper();
             foreach (var (key, value) in responseData)
             {
                 if (!key.Equals("vnp_SecureHash"))
@@ -117,13 +118,12 @@ namespace VNPAY.NET
                 }
             }
 
-            var statusCode = (TransactionStatusCode)sbyte.Parse(transactionStatusCode);
+            var statusCode = (TransactionStatusCode)sbyte.Parse(transactionStatus);  
             return new PaymentResult
             {
                 PaymentId = long.Parse(paymentId),
                 TransactionId = long.Parse(transactionId),
-                IsSuccess = statusCode == TransactionStatusCode.Code_00,
-                Checksum = secureHash,
+                IsSuccess = statusCode == TransactionStatusCode.Code_00 && helper.IsSignatureCorrect(secureHash, _hashSecret),
                 TransactionStatusCode = statusCode,
                 Description = EnumHelper.GetDescription(statusCode),
             };
@@ -133,7 +133,7 @@ namespace VNPAY.NET
         {
             if (string.IsNullOrEmpty(_baseUrl) || string.IsNullOrEmpty(_tmnCode) || string.IsNullOrEmpty(_hashSecret) || string.IsNullOrEmpty(_callbackUrl))
             {
-                throw new ArgumentNullException("Không tìm thấy BaseUrl, TmnCode, HashSecret, hoặc CallbackUrl");
+                throw new ArgumentException("Không tìm thấy BaseUrl, TmnCode, HashSecret, hoặc CallbackUrl");
             }
         }
     }
