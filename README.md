@@ -7,6 +7,10 @@ VNPAY là một dịch vụ thanh toán trực tuyến phổ biến tại Việt
 
 Mục tiêu của thư viện này là đơn giản hóa quá trình thiết lập và xử lý giao dịch cho nhà phát triển, đồng thời cải thiện hiệu suất so với code mẫu từ VNPAY.
 
+> [!WARNING]
+> - Tác giả không khuyến khích sử dụng thư viện của bên thứ ba cho tính năng thanh toán tiền **THẬT** trong dự án của bạn, ngoài phương pháp được nhà cung cấp dịch vụ thanh toán khuyến nghị.
+> - Hướng dẫn tích hợp dịch vụ thanh toán của VNPAY tại [**đây**](https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.html).
+
 ## :factory: Cơ chế xử lý
 
 ```mermaid
