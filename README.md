@@ -79,7 +79,6 @@ flowchart LR
 > [!WARNING]
 > Cần đảm bảo thông tin `vnp_TmnCode` và `vnp_HashSecret` bảo mật tuyệt đối.
 
-#### a. Đối với ASP.NET Core (từ .NET 6 về sau) sử dụng `appsettings.json`
 Thêm những thông tin cấu hình lấy từ VNPAY vào `appsettings.json` như ví dụ sau:
 ```cs
 {
@@ -90,17 +89,6 @@ Thêm những thông tin cấu hình lấy từ VNPAY vào `appsettings.json` nh
     "ReturnUrl": "https://localhost:1234/api/Vnpay/Callback" // Ví dụ
   }
 }
-```
-
-#### b. **Với .NET Framework** (dùng `web.config`)
-Thêm những thông tin cấu hình lấy từ VNPAY vào `web.config` như ví dụ sau:
-```xml
-<appSettings>
-  <add key="TmnCode" value="A1B2C3D4" />
-  <add key="HashSecret" value="A4D3C4C6D1Đ3D1D4QCS16PAFHI2GJ42D" />
-  <add key="BaseUrl" value="https://sandbox.vnpayment.vn/paymentv2/vpcpay.html" />
-  <add key="ReturnUrl" value="https://localhost:1234/api/Vnpay/Callback" />
-</appSettings>
 ```
 
 ### 1. Khởi tạo
