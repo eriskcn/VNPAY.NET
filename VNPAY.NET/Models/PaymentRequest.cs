@@ -11,22 +11,22 @@ namespace VNPAY.NET.Models
         /// Mã tham chiếu giao dịch (Transaction Reference). Đây là mã số duy nhất dùng để xác định giao dịch.  
         /// Lưu ý: Giá trị này bắt buộc và cần đảm bảo không bị trùng lặp giữa các giao dịch.
         /// </summary>
-        public long PaymentId { get; set; }
+        public required long PaymentId { get; set; }
 
         /// <summary>
         /// Thông tin mô tả nội dung thanh toán, không dấu và không bao gồm các ký tự đặc biệt
         /// </summary>
-        public string Description { get; set; }
+        public required string Description { get; set; }
 
         /// <summary>
         /// Số tiền thanh toán. Số tiền không mang các ký tự phân tách thập phân, phần nghìn, ký tự tiền tệ. Số tiền phải nằm trong khoảng 5.000 (VND) đến 1.000.000.000 (VND).
         /// </summary>
-        public double Money { get; set; }
+        public required double Money { get; set; }
 
         /// <summary>
         /// Địa chỉ IP của thiết bị thực hiện giao dịch.  
         /// </summary>
-        public string IpAddress { get; set; }
+        public required string IpAddress { get; set; }
 
         /// <summary>
         /// Mã phương thức thanh toán, mã loại ngân hàng hoặc ví điện tử thanh toán. Nếu mang giá trị <c>BankCode.ANY</c> thì chuyển hướng người dùng sang VNPAY chọn phương thức thanh toán.

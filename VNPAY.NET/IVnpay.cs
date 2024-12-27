@@ -43,5 +43,4 @@ namespace VNPAY.NET
         /// <returns></returns>
         PaymentResult GetPaymentResult(IQueryCollection parameters);
     }
-
 }

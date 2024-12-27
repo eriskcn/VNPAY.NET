@@ -125,7 +125,9 @@ namespace VNPAY.NET
                 VnpayTransactionId = long.Parse(vnp_TransactionNo),
                 IsSuccess = transactionStatusCode == TransactionStatusCode.Code_00 && responseCode == ResponseCode.Code_00 && helper.IsSignatureCorrect(vnp_SecureHash, _hashSecret),
                 Description = vnp_OrderInfo,
-                PaymentMethod = string.IsNullOrEmpty(vnp_CardType) ? "Không xác định" : vnp_CardType,
+                PaymentMethod = string.IsNullOrEmpty(vnp_CardType)
+                    ? "Không xác định"
+                    : vnp_CardType,
                 Timestamp = string.IsNullOrEmpty(vnp_PayDate)
                     ? DateTime.Now
                     : DateTime.ParseExact(vnp_PayDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
@@ -142,7 +144,9 @@ namespace VNPAY.NET
                 BankingInfor = new BankingInfor
                 {
                     BankCode = vnp_BankCode,
-                    BankTransactionId = string.IsNullOrEmpty(vnp_BankTranNo) ? "Không xác định" : vnp_BankTranNo,
+                    BankTransactionId = string.IsNullOrEmpty(vnp_BankTranNo)
+                        ? "Không xác định"
+                        : vnp_BankTranNo,
                 }
             };
         }

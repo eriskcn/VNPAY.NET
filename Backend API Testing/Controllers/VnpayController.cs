@@ -57,7 +57,7 @@ namespace Backend_API_Testing.Controllers
         }
 
         /// <summary>
-        /// Thực hiện hành động sau khi thanh toán. URL này cần được khai báo với VNPAY trước (ví dụ: http://localhost:1234/api/Vnpay/IpnAction)
+        /// Thực hiện hành động sau khi thanh toán. URL này cần được khai báo với VNPAY để API này hoạt đồng (ví dụ: http://localhost:1234/api/Vnpay/IpnAction)
         /// </summary>
         /// <returns></returns>
         [HttpGet("IpnAction")]
@@ -91,21 +91,20 @@ namespace Backend_API_Testing.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("Callback")]
-        public ActionResult<string> Callback()
+        public ActionResult<PaymentResult> Callback()
         {
             if (Request.QueryString.HasValue)
             {
                 try
                 {
                     var paymentResult = _vnpay.GetPaymentResult(Request.Query);
-                    var resultDescription = $"{paymentResult.PaymentResponse.Description}. {paymentResult.TransactionStatus.Description}.";
 
                     if (paymentResult.IsSuccess)
                     {
-                        return Ok(resultDescription);
+                        return Ok(paymentResult);
                     }
 
-                    return BadRequest(resultDescription);
+                    return BadRequest(paymentResult);
                 }
                 catch (Exception ex)
                 {
