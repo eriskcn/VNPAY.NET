@@ -10,6 +10,7 @@ Mục tiêu của thư viện này là đơn giản hóa quá trình thiết l�
 > [!WARNING]
 > - Tác giả không khuyến khích sử dụng thư viện của bên thứ ba cho tính năng thanh toán tiền **THẬT** trong dự án của bạn, ngoài phương pháp được nhà cung cấp dịch vụ thanh toán khuyến nghị.
 > - Hướng dẫn tích hợp dịch vụ thanh toán của VNPAY tại [**đây**](https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.html).
+> - Nhà phát triển vui lòng **đọc hết hướng dẫn của tác giả** để hạn chế lỗi không đáng có.
 
 ## :factory: Cơ chế xử lý
 
@@ -302,3 +303,17 @@ Kết quả trả về có dạng như sau:
 - Đảm bảo bảo mật cho `HashSecret`.
 - Thông tin tài khoản để chạy thử trên môi trường Sandbox tại [**ĐÂY**](https://sandbox.vnpayment.vn/apis/vnpay-demo/#th%C3%B4ng-tin-th%E1%BA%BB-test).
    
+
+## :gift: Ủng hộ tác giả
+
+**VNPAY.NET** là thư viện mã nguồn mở và hoàn toàn miễn phí cho `.NET`. Mọi người có thể ủng hộ tác giả và dự án này bằng cách để lại một :star: cho dự án, và đừng quên tặng tác giả cốc cà phê để tiếp thêm nhiều động lực.
+
+<a href="https://i.imgur.com/9YpRPQs.jpeg" target="_blank">
+  <img src="https://i.imgur.com/IUK9CFo.png" height=72 alt="Vietcombank" />
+</a>
+<a href="https://me.momo.vn/phanxuanquang" target="_blank">
+  <img src="https://i.imgur.com/0r18xHl.png" height=72 alt="Momo" />
+</a>
+<a href="https://i.imgur.com/00NqiL8.jpeg" target="_blank">
+  <img src="https://i.imgur.com/PSCoduQ.png" height=72 alt="ZaloPay" />
+</a>
